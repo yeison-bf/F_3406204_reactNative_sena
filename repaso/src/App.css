@@ -1,0 +1,47 @@
+.loginGeneral{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: gray;
+}
+
+.loginGeneral button{
+  padding: 1em;
+  border-radius: 5px;
+  background-color: blue;
+  color: white;
+}
+
+/* Header Inicio */
+.header {
+  width: 100;
+}
+
+.contenidoGeneral{
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+.sidebar{
+  width: 20%;
+  height: 100vh;
+  background-color: black;
+  color: white;
+}
+
+.contenidoHijos{
+  width: 80%;
+  padding-left: 4em;
+  height: 100vh;
+}
+
+.textLink{
+  color: white;
+  font-size: 2em;
+  margin-top: 2em;
+  text-decoration: none;
+}
