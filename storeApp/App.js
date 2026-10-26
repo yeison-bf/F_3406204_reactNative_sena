@@ -1,57 +1,60 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function App() {
 
+  // constante para ser visiible o no el modal
+  const [visible, setVisible] = useState(false)
   const [listClients, setListClients] = useState([
     {
       "id": 1,
+      "document": "1051822599",
       "name": "Juan Jose",
       "lastName": "Rodriguez Monsalve",
       "location": "Medellín",
       "email": "juan@gmail.com",
       "status": true,
-    },
-    {
-      "id": 2,
-      "name": "Sofia",
-      "lastName": "Gonzalez Gallego",
-      "location": "Cali",
-      "email": "sofi@gmail.com",
-      "status": false,
-    },
-    {
-      "id": 3,
-      "name": "Juan Miguel",
-      "lastName": "Gallego Gallego",
-      "location": "Cartagena de Indias",
-      "email": "juanMiguel@gmail.com",
-      "status": true,
-    },
-    {
-      "id": 4,
-      "name": "Juan Miguel",
-      "lastName": "Gallego Gallego",
-      "location": "Cartagena de Indias",
-      "email": "juanMiguel@gmail.com",
-      "status": true,
     }
   ]);
 
-  const [CambioColor, setCambioColor] = useState(false)
+
+  // Constantes para almacenar datos
+  const [document, setdocument] = useState("")
+  const [name, setName] = useState("")
+  const [lastName, setlastName] = useState("")
+  const [location, setlocation] = useState("")
+  const [email, setemail] = useState("")
+
+  const saveDataClients = () => {
+    setListClients([
+      ...listClients,
+      {
+        id: document,
+        document: document,
+        name: name,
+        lastName: lastName,
+        location: location,
+        email: email,
+        status: true
+      }
+    ])
+
+    setVisible(false)
+    setdocument("")
+    setName("")
+    setlastName("")
+    setlocation("")
+    setemail("")
+   
+  }
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, CambioColor ? {backgroundColor:'blue'} : {backgroundColor:'red'}]}>
-        <Text>
+      <View style={[styles.header]}>
+        <Text style={styles.headerText}>
           Listado de Clientes
         </Text>
-        <TouchableOpacity
-        onPress={()=>setCambioColor(!CambioColor)}
-         style={styles.btnFloatingCTM}>
-          <Text>ctm</Text>
-        </TouchableOpacity>
       </View>
       <View style={styles.bodyLisClients}>
         <FlatList
@@ -61,22 +64,96 @@ export default function App() {
           renderItem={({ item }) => (
             <View style={styles.card}>
               <Image
-                source={'https://cdn-icons-png.flaticon.com/512/6326/6326055.png'}
+                style={styles.avatar}
+                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/6326/6326055.png' }}
               />
-              <Text>Nombre: {item.name}</Text>
-              <Text>Direccion: {item.lastName} </Text>
-              <Text>Email: {item.email} </Text>
+              <View>
+                <Text>Documento: {item.document}</Text>
+                <Text>Nombre: {item.name}</Text>
+                <Text>Direccion: {item.lastName} </Text>
+                <Text>Email: {item.email} </Text>
+              </View>
             </View>
           )}
         >
-
         </FlatList>
 
 
       </View>
-      <TouchableOpacity style={styles.btnFloatingNew}>
-        <Text>+</Text>
+      <TouchableOpacity
+        style={styles.btnFloatingNew}
+        onPress={() => setVisible(true)}>
+        <Text style={styles.headerText}>+</Text>
       </TouchableOpacity>
+
+      <Modal
+        visible={visible}
+        animationType='slide'
+      >
+        <View style={[styles.BodyModal, { flex: 1 }]}>
+          <View style={styles.headerModal}>
+            <Text style={styles.headerModalTitle}>FORMULARIO DE REGISTRO DE CLIENTE</Text>
+            <Pressable onPress={() => setVisible(false)} ><Text style={styles.headerModalTitle}>X</Text></Pressable>
+          </View>
+          <View style={styles.formModal}>
+
+            <View style={styles.formControl}>
+              <Text>Documento de identidad</Text>
+              <TextInput
+                style={styles.inputText}
+                placeholder='Documento'
+                onChangeText={setdocument}
+                value={document}
+              />
+            </View>
+            <View style={styles.formControl}>
+              <Text>Nombres</Text>
+              <TextInput
+                style={styles.inputText}
+                placeholder='Nombre completo'
+                onChangeText={setName}
+                value={name}
+              />
+            </View>
+            <View style={styles.formControl}>
+              <Text>Apellidos</Text>
+              <TextInput
+                style={styles.inputText}
+                placeholder='Apellidos'
+                onChangeText={setlastName}
+                value={lastName}
+              />
+            </View>
+
+            <View style={styles.formControl}>
+              <Text>Dirección</Text>
+              <TextInput
+                style={styles.inputText}
+                placeholder='Dirección'
+                onChangeText={setlocation}
+                value={location}
+              />
+            </View>
+
+            <View style={styles.formControl}>
+              <Text>Email</Text>
+              <TextInput
+                style={styles.inputText}
+                placeholder='Email'
+                onChangeText={setemail}
+                value={email}
+              />
+            </View>
+
+          </View>
+          <Pressable
+            style={styles.botonSaveData}
+            onPress={saveDataClients} >
+            <Text>GUARDAR DATOS</Text>
+          </Pressable>
+        </View>
+
+      </Modal>
     </View>
   );
 }
@@ -89,13 +166,16 @@ const styles = StyleSheet.create({
   header: {
     height: '60px',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: 'green'
   },
 
-  colorUno:{
-    backgroundColor: 'blue',
+  headerText: {
+    color: 'white',
+    fontSize: '1.3em',
+    fontWeight: 'bold'
   },
-  colorDos:{
+  colorDos: {
     backgroundColor: 'red'
   },
   bodyLisClients: {
@@ -106,7 +186,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '60px',
     height: '60px',
-    backgroundColor: '#A63D3D',
+    backgroundColor: 'green',
     bottom: '20px',
     right: '20px',
     justifyContent: 'center',
@@ -114,19 +194,71 @@ const styles = StyleSheet.create({
     borderRadius: '25px'
   },
 
-  btnFloatingCTM:{
-    position:'absolute',
-    right:'5px',
+  btnFloatingCTM: {
+    position: 'absolute',
+    right: '5px',
     backgroundColor: 'white'
   },
 
   // Estilos del listado de clientes
   card: {
-    backgroundColor: 'gray',
     marginTop: '8px',
     padding: '8px',
     gap: '5px',
-    borderRadius: '10px',
-    border: '1px solid gray'
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBlockColor: 'green',
+    borderRadius: 25,
+    alignItems: 'center'
   },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 15,
+  },
+
+  // Diseño del modal
+  headerModal: {
+    flexDirection: 'row',
+    height: 85,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: 'green',
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+
+  },
+
+  headerModalTitle: {
+    color: 'white',
+    fontSize: 16
+  },
+  headerModalButton: {
+  },
+
+  formModal: {
+    padding: 20
+  },
+  formControl: {
+    marginTop: 15
+  },
+  inputText: {
+    border: '1px solid',
+    borderRadius: 9,
+    paddingLeft: 15,
+    height: 38
+  },
+  botonSaveData: {
+    position: 'absolute',
+    bottom: 10,
+    backgroundColor: 'green',
+    width: '85%',
+    left: 25,
+    height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 18
+  }
+
 });
