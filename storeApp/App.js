@@ -1,23 +1,16 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { FlatList, Image, Modal, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function App() {
 
   // constante para ser visiible o no el modal
   const [visible, setVisible] = useState(false)
-  const [listClients, setListClients] = useState([
-    {
-      "id": 1,
-      "document": "1051822599",
-      "name": "Juan Jose",
-      "lastName": "Rodriguez Monsalve",
-      "location": "Medellín",
-      "email": "juan@gmail.com",
-      "status": true,
-    }
-  ]);
 
+  // Arreglo de objetos : Listado de clientes
+  const [listClients, setListClients] = useState([]);
 
   // Constantes para almacenar datos
   const [document, setdocument] = useState("")
@@ -26,8 +19,11 @@ export default function App() {
   const [location, setlocation] = useState("")
   const [email, setemail] = useState("")
 
-  const saveDataClients = () => {
-    setListClients([
+
+  // Función para guardar los datos.
+  const saveDataClients = async () => {
+
+    let newClientsInfo = [
       ...listClients,
       {
         id: document,
@@ -38,16 +34,39 @@ export default function App() {
         email: email,
         status: true
       }
-    ])
+    ]
 
+    await AsyncStorage.setItem("@infoClients", JSON.stringify(newClientsInfo) )
+
+    setListClients(newClientsInfo)
+
+    // LLamado  a la función de limpieza de campos
+    clearData()
+
+  }
+
+
+  // Función para limpiar los campos del formulario
+  const clearData = () => {
     setVisible(false)
     setdocument("")
     setName("")
     setlastName("")
     setlocation("")
     setemail("")
-   
   }
+
+  // Función para obtener los datoa
+  const getClientesData = async () =>{
+    let data = await AsyncStorage.getItem("@infoClients") || []
+    console.log( JSON.parse(data))
+    setListClients(JSON.parse(data))
+  }
+
+  
+  useEffect(()=>{
+        getClientesData()
+  }, [])
 
   return (
     <View style={styles.container}>
